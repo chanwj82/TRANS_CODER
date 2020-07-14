@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+	<!-- Jdbc Session Clustering
+	<Get name="server">
+	  <Get id="idMgr" name="sessionIdManager"/>
+	</Get>
+	<Set name="sessionHandler">
+	  <New class="org.eclipse.jetty.server.session.SessionHandler">
+	    <Arg>
+	      <New class="org.eclipse.jetty.server.session.JDBCSessionManager">
+	        <Set name="sessionIdManager">
+	          <Ref id="idMgr"/>
+	        </Set>
+	      </New>
+	    </Arg>
+	  </New>
+	</Set>
+	-->
+	
+	<!-- HazelCast Session Clustering -->
+    <Get name="Server">
+	  <Get id="hazelcastIdMgr" name="sessionIdManager"/>
+	</Get>
+	
+	<Set name="sessionHandler">
+	   <New class="org.eclipse.jetty.server.session.SessionHandler">
+	       <Arg>
+	           <New id="hazelcastMgr" class="com.hazelcast.session.HazelcastSessionManager">
+	               <Set name="sessionIdManager">
+	                   <Ref id="hazelcastIdMgr"/>
+	               </Set>
+	           </New>
+	       </Arg>
+	   </New>
+	</Set>
+	
+</Configure>

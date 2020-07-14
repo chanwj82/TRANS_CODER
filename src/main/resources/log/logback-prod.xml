@@ -1,0 +1,58 @@
+<included>
+
+    <!-- jdbc logger --> 
+    <logger name="jdbc.connection" additivity="false">
+        <level value="error" /> 
+        <appender-ref ref="service_rolling_async" />
+        <appender-ref ref="error_rolling_async" />
+    </logger>
+    <logger name="jdbc.resultset" additivity="false">
+        <level value="off" />
+    </logger>
+    <logger name="jdbc.resultsettable" additivity="false">
+        <level value="error" /> 
+        <appender-ref ref="service_rolling_async" />
+        <appender-ref ref="error_rolling_async" />
+    </logger>
+    <logger name="jdbc.audit" additivity="false">
+        <level value="error" /> 
+        <appender-ref ref="service_rolling_async" />
+        <appender-ref ref="error_rolling_async" />
+    </logger>
+    <logger name="jdbc.sqlonly" additivity="false">
+        <level value="info" /> 
+        <appender-ref ref="service_rolling_async" />
+        <appender-ref ref="error_rolling_async" />
+    </logger> 
+    <logger name="jdbc.sqltiming" additivity="false">
+        <level value="error" /> 
+        <appender-ref ref="service_rolling_async" />
+        <appender-ref ref="error_rolling_async" />
+    </logger>
+    
+    <!-- pagoda logger -->
+    <logger name="com.pagoda" additivity="false">
+        <level value="info" />
+        <appender-ref ref="service_rolling_async" />
+        <appender-ref ref="error_rolling_async" />
+    </logger>
+    
+    <!-- servlet handler logger -->
+    <logger name="org.springframework.web.servlet.handler" additivity="false">
+        <level value="error" />
+        <appender-ref ref="console" />
+    </logger>
+    
+    <logger name="com.hazelcast.session.HazelcastSessionManager" additivity="false">
+        <level value="error" />
+        <appender-ref ref="console" />
+    </logger>
+
+    
+    <!-- root -->
+    <root>
+        <level value="info" />
+        <appender-ref ref="console" />
+    </root>
+    
+</included>

@@ -1,0 +1,299 @@
+apply plugin: "java"
+apply plugin: 'maven'
+apply plugin: "eclipse"
+
+group = 'com.pagoda'
+version = "1.0-RELEASE"
+
+// JDK 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+
+buildDir = "target"
+libsDirName = '/'
+
+eclipse {
+    classpath {
+        defaultOutputDir = file("/classes")
+    }
+}
+
+sourceSets {
+    main {
+       output.resourcesDir = "$buildDir/resources"
+   	}
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/webapp/WEB-INF/lib"
+    from configurations.runtime
+}
+
+task copyWebapp(type: Copy) {
+    from "webapp"
+    into "$buildDir/webapp"
+}
+
+task copyFFmpeg(type: Copy) {
+    from "ffmpeg"
+    into "$buildDir/ffmpeg"
+}
+
+task copyBin(type: Copy) {
+    from "bin"
+    into "$buildDir/bin"
+}
+
+task deleteTempDir(type: Delete) {
+    delete "$buildDir/tmp"
+    delete "$buildDir/dependency-cache"
+    delete "$buildDir/classes"
+    delete "$buildDir/poms"
+    delete "$buildDir/ivy.xml"
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.bmuschko:gradle-tomcat-plugin:2.2.4"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    
+
+    maven {
+    	url "http://www.dcm4che.org/maven2/"
+    }
+    
+	maven {
+    	url "http://xuggle.googlecode.com/svn/trunk/repo/share/java/"
+    }
+    
+    maven {
+    	url "https://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/"
+    }
+    /*
+    maven {
+    	url "http://www.terracotta.org/download/reflector/releases"
+    }	
+    */
+     maven {
+        url "http://localhost:9091/nexus/content/repositories/releases/"
+    }
+    
+    maven {
+        url "http://localhost:9091/nexus/content/repositories/snapshots/"
+    }
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository(url: "http://localhost:9091/nexus/content/repositories/snapshots/") {
+        authentication(userName: 'admin', password: 'admin123')
+      }
+      pom.version = "1.0-SNAPSHOT"
+      pom.artifactId = "transcoder"
+      pom.groupId = "com.pagoda"
+    }
+  }
+}
+
+// dependency
+def version = [
+	pagoda: '1.0-SNAPSHOT'
+	, spring: "4.1.6.RELEASE"
+	, springMobileDevice: "1.1.5.RELEASE"
+	, jetty: "9.2.16.v20160414"
+	, jasper: "6.0.29"
+	, ojdbc6: "11.2.0.4.0"
+	, commonsLang: "2.6"
+	, commonsDbcp: "1.4"
+	, commonsIo: "2.4"
+	, commonsCodec: "1.8"
+	, commonsFileupload: "1.2.2"
+	, commonsBeanutils: '1.9.2'
+	, gson: "2.2.2"
+	, logback: "1.1.3"
+	, slf4j: "1.7.6"
+	, log4jdbcremix: "0.2.7"
+	, aspectjweaver: "1.8.9"
+	, julToSlf4j: "1.7.4"
+	, mybatisSpring: "1.2.2"
+	, mybatis: "3.2.8"
+	, json: '1.1'
+	, tiles: '2.2.2'
+	, ehcache: '2.6.11'
+	, jsch: '0.1.53'
+	, jett: '0.10.0'
+	, mysql: '5.1.6'
+	, HikariCP: '2.4.7'
+	, mariadb: '1.4.6'
+	, hazelcastJetty9 : '1.0'
+	, hazelcast: '3.6.4'
+]
+
+dependencies {
+	// -- pagoda common
+	compile "com.pagoda:common:${version.pagoda}"
+	
+	// -- Spring
+	compile "org.springframework:spring-aop:${version.spring}",
+			"org.springframework:spring-beans:${version.spring}",
+			"org.springframework:spring-context:${version.spring}",
+			"org.springframework:spring-context-support:${version.spring}",
+			"org.springframework:spring-core:${version.spring}",
+			"org.springframework:spring-jdbc:${version.spring}",
+			"org.springframework:spring-test:${version.spring}",
+			"org.springframework:spring-web:${version.spring}",
+			"org.springframework:spring-webmvc:${version.spring}",
+			"org.springframework:spring-websocket:${version.spring}",
+			"org.springframework.mobile:spring-mobile-device:${version.springMobileDevice}"
+
+	// -- JETTY LIB
+	compile "org.eclipse.jetty:jetty-server:${version.jetty}",
+			"org.eclipse.jetty:jetty-webapp:${version.jetty}",
+			"org.eclipse.jetty:jetty-http:${version.jetty}",
+			"org.eclipse.jetty:jetty-jsp:${version.jetty}",
+			"org.eclipse.jetty:jetty-io:${version.jetty}",
+			"org.eclipse.jetty:jetty-util:${version.jetty}",
+			"org.eclipse.jetty:jetty-xml:${version.jetty}",
+			"org.eclipse.jetty:jetty-jndi:${version.jetty}",
+			"org.eclipse.jetty:jetty-plus:${version.jetty}",
+			"org.eclipse.jetty:jetty-nosql:${version.jetty}",
+			"org.eclipse.jetty.websocket:websocket-server:${version.jetty}"
+			
+	
+	// -- Jstl Jasper
+	compile "org.apache.tomcat:jasper:${version.jasper}"
+
+	// -- Mybatis
+	compile "org.mybatis:mybatis-spring:${version.mybatisSpring}",
+			"org.mybatis:mybatis:${version.mybatis}"
+			
+	// -- Common 
+	compile "commons-lang:commons-lang:${version.commonsLang}",
+			"commons-io:commons-io:${version.commonsIo}",
+			"commons-codec:commons-codec:${version.commonsCodec}",
+			"commons-fileupload:commons-fileupload:${version.commonsFileupload}",
+			"commons-dbcp:commons-dbcp:${version.commonsDbcp}",
+			"commons-beanutils:commons-beanutils:${version.commonsBeanutils}"
+	
+	// -- Logback 
+    compile "ch.qos.logback:logback-classic:${version.logback}",
+          	"ch.qos.logback:logback-core:${version.logback}",
+          	"ch.qos.logback:logback-access:${version.logback}"
+    
+    // -- OJDBC
+	//compile "com.oracle:ojdbc6:${version.ojdbc6}"
+    
+    // -- Slf4j   	
+    compile "org.slf4j:slf4j-log4j12:${version.slf4j}",
+            "org.slf4j:jcl-over-slf4j:${version.julToSlf4j}",
+            "org.lazyluke:log4jdbc-remix:${version.log4jdbcremix}"
+             
+    // -- aspectj 
+    compile "org.aspectj:aspectjweaver:${version.aspectjweaver}" 
+            
+    // -- Json 
+    compile "com.googlecode.json-simple:json-simple:${version.json}"
+	compile "com.google.code.gson:gson:${version.gson}"
+	
+	// -- Tiles
+	compile "org.apache.tiles:tiles-jsp:${version.tiles}"
+	
+	// -- Ehcache
+	//compile group: 'net.sf.ehcache', name: 'ehcache', version: '2.6.11'
+	compile group: 'net.sf.ehcache', name: 'ehcache', version: '2.10.6'
+	
+	// -- Terracotta
+	//compile group: 'org.terracotta', name: 'terracotta-toolkit-1.6-runtime-ee', version: '5.6.0'
+	//compile group: 'org.terracotta', name: 'terracotta-toolkit-1.6-runtime-ee', version: '5.10.0'
+	//compile group: 'org.terracotta', name: 'terracotta-toolkit-1.6-runtime', version: '5.6.0'
+	
+	//compile group: 'org.terracotta', name: 'terracotta-toolkit-runtime', version: '4.3.2'
+	
+	//compile group: 'org.terracotta.toolkit', name: 'terracotta-toolkit-api', version: '2.7'
+	//compile group: 'org.terracotta.toolkit', name: 'terracotta-toolkit-api-internal', version: '2.2.0'
+		
+	// -- JSCH SFTP
+	compile "com.jcraft:jsch:${version.jsch}"
+	
+	// -- jett
+	compile "net.sf.jett:jett-core:${version.jett}"
+	
+	// -- mysql jdbc
+	compile "mysql:mysql-connector-java:${version.mysql}"
+	
+	// -- HikariCP
+	compile "com.zaxxer:HikariCP:${version.HikariCP}"
+	
+	// -- mariadb jdbc
+	compile "org.mariadb.jdbc:mariadb-java-client:${version.mariadb}"
+	
+	// -- hazelcast jetty session clustering
+	compile "com.hazelcast:hazelcast-jetty9-sessionmanager:${version.hazelcastJetty9}"
+	compile "com.hazelcast:hazelcast:${version.hazelcast}"
+	compile "com.hazelcast:hazelcast-all:${version.hazelcast}"
+	compile "com.hazelcast:hazelcast-client:${version.hazelcast}"
+	compile "com.hazelcast:hazelcast-spring:${version.hazelcast}"
+	
+}
+
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    
+    resolutionStrategy {
+        // alternatively replace a specific lib explicitly:
+        eachDependency { DependencyResolveDetails details ->
+        	if ( "${version.jetty}" != "null" && details.requested.group == "org.eclipse.jetty" && details.requested.version != "${version.jetty}") {
+        		println "[" + details.requested.group + "] group version replace [" + details.requested.version + "] to [${version.jetty}]" 
+            	details.useVersion "${version.jetty}"
+       		}
+        }
+    }
+}
+
+jar {
+	
+	dependsOn copyWebapp
+	
+	dependsOn copyToLib
+	
+	dependsOn copyFFmpeg
+	
+	dependsOn copyBin
+
+	manifest {
+	    attributes 'Main-Class': 'com.pagoda.transcoder.HttpdTranscoderStart'
+	    def manifestCp = configurations.runtime.files.collect  {
+	    File file = it
+	    "webapp/WEB-INF/lib/${file.name}"
+	    }.join(' ')
+	
+	    attributes 'Class-Path': manifestCp + ' resources/'
+	    
+		exclude ("log/**")
+	    exclude ("oracle/**")
+	    exclude ("properties/**")
+	    exclude ("spring/**")
+	    exclude ("*.xml")
+		
+	}
+}
+
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+	<Arg>
+		<!-- Thread Max|Min|Timeout limit configuration -->
+		<New class="org.eclipse.jetty.util.thread.QueuedThreadPool">
+			<Set name="maxThreads">500</Set>
+			<Set name="minThreads">50</Set>
+			<Set name="idleTimeout">10000</Set>
+		</New>
+	</Arg>
+	
+	<!-- ===================================================================== -->
+	<!-- Configure a SessionIdManager                                          -->
+	<!-- ===================================================================== -->
+	<Set name="sessionIdManager">
+		<!-- Jdbc Session Clustering
+	    <New id="idMgr" class="org.eclipse.jetty.server.session.JDBCSessionIdManager">
+	      <Arg>
+	        <Ref refid="Server"/>
+	      </Arg>
+	      <Set name="workerName"><Property name="jetty.jdbcSession.workerName" default="node01"/></Set>
+	      <Set name="scavengeInterval">60</Set>
+	      <Set name="DatasourceName"><Property name="jetty.jdbcSession.datasource" default="jdbc/mariadb"/></Set>
+	    </New>
+	     -->
+	    <!-- Hazelcast Session Clustering -->
+	    <New id="hazelcastIdMgr" class="com.hazelcast.session.HazelcastSessionIdManager">
+	        <Arg><Ref id="Server"/></Arg>
+	        <Set name="configLocation">hazelcast.xml</Set>
+	        <Set name="workerName">worker</Set>
+	    </New>
+   		
+	</Set>
+	
+	
+	<Set name="connectors">
+	    <Array type="org.eclipse.jetty.server.Connector">
+	        <Item>
+	            <New class="org.eclipse.jetty.server.ServerConnector">
+	                <Arg> <Ref refid="Server"/> </Arg>
+	                <Set name="port">8989</Set>
+	                <Set name="name">connector</Set>
+	            </New>
+	        </Item>
+	    </Array>
+	</Set>
+	
+	<Set name="handler"> 
+		<New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection"> 
+			<Set name="handlers"> 
+				<Array type="org.eclipse.jetty.server.Handler"> 
+					<Item> 
+						<New class="org.eclipse.jetty.webapp.WebAppContext"> 
+							<Set name="contextPath">/</Set> 
+							<Set name="resourceBase">./webapp</Set> 
+							<Set name="parentLoaderPriority">true</Set> 
+						</New> 
+					</Item> 
+					
+				</Array> 
+			</Set> 
+		</New> 
+	</Set>
+  	
+  	<!-- Oracle Database JNDI
+  	<New id="ora9" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg></Arg>
+    <Arg>jdbc/ora9</Arg>
+    <Arg>
+    	<New class="oracle.jdbc.pool.OracleDataSource">
+	      <Set name="DriverType">thin</Set>
+	      <Set name="URL">jdbc:oracle:thin:@192.168.11.168:1521:ORCL</Set>
+	      <Set name="User">pagodaone</Set>
+	      <Set name="Password">pagodaone</Set>
+	      <Set name="connectionCachingEnabled">true</Set>
+	      <Set name="connectionCacheProperties">
+	        <New class="java.util.Properties">
+	          <Call name="setProperty">
+	            <Arg>MinLimit</Arg>
+	            <Arg>5</Arg>
+	          </Call>
+	         
+	        </New>
+	      </Set>
+	    </New>
+    </Arg>
+  </New>
+   -->
+</Configure>
+

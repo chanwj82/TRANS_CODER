@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+    
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    	<encoder>
+	        <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%X{req.remoteHost}|%X{req.requestURI}|%X{req.requestMethod}|%X{req.pagodaMemberId}|%X{req.pagodaMemberName}|%logger{36}:%line] %msg%n</pattern>
+	        <immediateFlush>true</immediateFlush>
+	        <charset>UTF-8</charset>
+	    </encoder>
+
+        <!-- 
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+	      	<evaluator name="pagoda">
+	        	<expression>
+	        		message.contains("selectMenu") || message.contains("selectCustomerBasicNewDeId")
+	        	
+	        	</expression>
+	      	</evaluator>
+	      	<OnMismatch>NEUTRAL</OnMismatch>
+        	<OnMatch>DENY</OnMatch>
+	    </filter>
+ 		
+	    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
+	      <evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator"> 
+	        <expression>
+	           !(e.mdc?.get("req.pagodaMemberId") =~ /notlogin/ )
+	        </expression>
+	      </evaluator>
+	      <OnMismatch>DENY</OnMismatch>
+	      <OnMatch>NEUTRAL</OnMatch>
+	    </filter> 
+	      -->
+    </appender>
+    
+    <appender name="service_rolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/service.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>logs/service_%d{yyyyMMdd}.log</FileNamePattern>            
+        </rollingPolicy>
+        
+        <encoder>
+	        <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%X{req.remoteHost}|%X{req.requestURI}|%X{req.requestMethod}|%X{req.pagodaMemberId}|%X{req.pagodaMemberName}|%logger{36}:%line] %msg%n</pattern>
+	        <immediateFlush>true</immediateFlush>
+	        <charset>UTF-8</charset>
+	    </encoder>
+        
+        <!-- 
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+	      	<evaluator name="pagoda">
+	        	<expression>message.contains("selectBookingLiveClassSchedule")</expression>
+	      	</evaluator>
+	      	<OnMismatch>DENY</OnMismatch>
+        	<OnMatch>NEUTRAL</OnMatch>
+	    </filter>
+	     
+        
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
+	      <evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator"> 
+	        <expression>
+	           !(e.mdc?.get("req.pagodaMemberId") =~ /notlogin/ )
+	        </expression>
+	      </evaluator>
+	      <OnMismatch>DENY</OnMismatch>
+	      <OnMatch>NEUTRAL</OnMatch>
+	    </filter> 
+	    -->
+        <maxHistory>30</maxHistory> 
+    </appender>    
+    <appender name="error_rolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>logs/error_%d{yyyyMMdd}.log</FileNamePattern>            
+        </rollingPolicy> 
+        
+        <encoder>
+	        <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%X{req.remoteHost}|%X{req.requestURI}|%X{req.requestMethod}|%X{req.pagodaMemberId}|%X{req.pagodaMemberName}|%logger{36}:%line] %msg%n</pattern>
+	        <immediateFlush>true</immediateFlush>
+	        <charset>UTF-8</charset>
+	    </encoder>
+        
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>           
+        </filter>
+        <maxHistory>30</maxHistory> 
+    </appender>    
+    <appender name="service_rolling_async" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="service_rolling" />
+    </appender>
+    <appender name="error_rolling_async" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="error_rolling" />
+    </appender>
+     
+    <include resource="./log/logback-${spring.profiles.active}.xml" />
+    
+</configuration>

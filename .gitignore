@@ -1,0 +1,7 @@
+# Project exclude paths
+/.gradle/
+/target/
+/target/classes/java/main/
+/classes/
+/logs*/
+/**/*.class

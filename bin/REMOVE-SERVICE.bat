@@ -1,0 +1,3 @@
+set SERVICE_NAME=PAGODA-TRANSCODER-NODE-01
+
+nssm.exe remove "%SERVICE_NAME%"

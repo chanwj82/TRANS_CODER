@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                           http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+                           http://www.springframework.org/schema/util 
+                           http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<!-- Full name 빈 스캔.    -->                       
+    <context:component-scan base-package="com.pagoda.transcoder"></context:component-scan>
+    
+    <!-- 메세지 소스 생성. 
+    <bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
+        <constructor-arg ref="messageSource" />
+    </bean>
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list merge="true">
+                <value>classpath:messages/messages</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="utf-8" />
+        <property name="cacheSeconds" value="1" />
+    </bean>
+    -->
+
+    <!-- 회원 비밀번호 암호화 -->
+    <bean id="memberCipher" class="com.pagoda.framework.core.util.crypto.CipherAES">
+        <constructor-arg type="java.lang.String">
+            <value>#{properties['cipher.transform.member']}</value>            
+        </constructor-arg>
+        <constructor-arg type="java.lang.String">
+            <value>#{properties['cipher.key.member']}</value>           
+        </constructor-arg>
+    </bean>
+    
+    <bean id="authTokenCipher" class="com.pagoda.framework.core.util.crypto.CipherAES">
+        <constructor-arg type="java.lang.String">
+            <value>#{properties['cipher.transform.authtoken']}</value>            
+        </constructor-arg>
+        <constructor-arg type="java.lang.String">
+            <value>#{properties['cipher.key.authtoken']}</value>           
+        </constructor-arg>
+    </bean>
+    
+    
+    <!-- RestTemplate 등록. 
+    <bean class="com.pagoda.framework.web.client.CustomRestTemplate">
+        <qualifier value="basic"/> 
+        <constructor-arg>
+            <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
+               <property name="connectTimeout" value="10000" />
+               <property name="readTimeout" value="30000" />
+            </bean> 
+        </constructor-arg>
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter">
+                    <property name="supportedMediaTypes" value="application/xml; charset=UTF-8" />
+                </bean>
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                    <property name="supportedMediaTypes" value="application/json; charset=UTF-8" />
+                    <property name="prettyPrint" value="true" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+    -->
+</beans>
