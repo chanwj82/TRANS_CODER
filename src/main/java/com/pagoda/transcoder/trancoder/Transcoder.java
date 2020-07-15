@@ -1,5 +1,6 @@
 package com.pagoda.transcoder.trancoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,12 @@ public class Transcoder implements Runnable {
 			command.add("-b:a");
 			command.add((String) commandMap.get("audioBitRate"));
 		}
-		
+
+		File encodeTargetPathDir = new File(encodeTargetPath);
+		if(!encodeTargetPathDir.exists()){
+			encodeTargetPathDir.mkdirs();
+		}
+
 		command.add(encodeTargetPath + "/" + fileid + ".mp4");
 		
 		pb.command(command);

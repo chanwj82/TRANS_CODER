@@ -162,6 +162,11 @@ public class TranscoderController {
 					String newFileNm = todate + "_" + uuid;
 					String sourceFilePath = encodeSourcePath + "/" + newFileNm;
 
+					File encodeSourcePathDir = new File(encodeSourcePath);
+					if(!encodeSourcePathDir.exists()){
+						encodeSourcePathDir.mkdirs();
+					}
+
 					File file = new File(sourceFilePath + "." + fileExtSn);
 					FileOutputStream fos = new FileOutputStream(file);
 
